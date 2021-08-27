@@ -2,7 +2,10 @@ package tourGuide.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,17 +23,19 @@ public class TourGuideController {
 	@Autowired
 	TourGuideService tourGuideService;
 	
-    @RequestMapping("/")
+    @GetMapping("/")
     public String index() {
         return "Greetings from TourGuide!";
     }
-    
-    @RequestMapping("/getLocation") 
+
+    @GetMapping("/getLocation")
     public String getLocation(@RequestParam String userName) {
+        System.out.println(tourGuideService.getUserLocation(getUser(userName)));
     	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+        System.out.println(visitedLocation);
 		return JsonStream.serialize(visitedLocation.location);
     }
-    
+
     //  TODO: Change this method to no longer return a List of Attractions.
  	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
  	//  Return a new JSON object that contains:

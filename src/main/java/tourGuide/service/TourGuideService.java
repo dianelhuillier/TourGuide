@@ -100,7 +100,8 @@ public class TourGuideService {
 		
 		return nearbyAttractions;
 	}
-	
+
+
 	private void addShutDownHook() {
 		Runtime.getRuntime().addShutdownHook(new Thread() { 
 		      public void run() {
