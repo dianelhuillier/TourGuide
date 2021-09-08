@@ -46,6 +46,15 @@ dependencies {
 }
 
 
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+
+
 jacoco {
     toolVersion = "0.8.4"
 }

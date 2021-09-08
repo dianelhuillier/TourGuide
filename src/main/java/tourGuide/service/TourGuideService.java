@@ -2,13 +2,8 @@ package tourGuide.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -37,6 +32,7 @@ public class TourGuideService {
 	boolean testMode = true;
 	
 	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
+		Locale.setDefault(Locale.US);
 		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
 		
@@ -49,17 +45,18 @@ public class TourGuideService {
 		tracker = new Tracker(this);
 		addShutDownHook();
 	}
-	
+
 	public List<UserReward> getUserRewards(User user) {
 		return user.getUserRewards();
 	}
 	
 	public VisitedLocation getUserLocation(User user) {
-		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
-			user.getLastVisitedLocation() :
-			trackUserLocation(user);
+		VisitedLocation visitedLocation;
+		if (user.getVisitedLocations().size() > 0) visitedLocation = user.getLastVisitedLocation();
+		else visitedLocation = trackUserLocation(user);
 		return visitedLocation;
 	}
+
 	
 	public User getUser(String userName) {
 		return internalUserMap.get(userName);
@@ -82,13 +79,26 @@ public class TourGuideService {
 		user.setTripDeals(providers);
 		return providers;
 	}
-	
+
+//!!!!!! For input string: "-140,523329"       getUserLocation
 	public VisitedLocation trackUserLocation(User user) {
+		Locale.setDefault(Locale.US);
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
+
+//	public VisitedLocation getUserLocation(User user) {
+//		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
+//				user.getLastVisitedLocation() :
+//				trackUserLocation(user);
+//		return visitedLocation;
+
+	public VisitedLocation trackUser (User user){
+		return user.getLastVisitedLocation();
+	}
+
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
@@ -100,6 +110,7 @@ public class TourGuideService {
 		
 		return nearbyAttractions;
 	}
+
 
 
 	private void addShutDownHook() {

@@ -23,6 +23,7 @@ public class TestTourGuideService {
 
 	@Test
 	public void getUserLocation() {
+		InternalTestHelper.setInternalUserNumber(0);
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 		InternalTestHelper.setInternalUserNumber(0);
@@ -34,6 +35,7 @@ public class TestTourGuideService {
 
 		tourGuideService.tracker.stopTracking();
 		assertTrue(visitedLocation.userId.equals(user.getUserId()));
+
 	}
 	
 	@Test
@@ -111,7 +113,8 @@ public class TestTourGuideService {
 		
 		assertEquals(5, attractions.size());
 	}
-	
+
+	@Test
 	public void getTripDeals() {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
@@ -123,8 +126,8 @@ public class TestTourGuideService {
 		List<Provider> providers = tourGuideService.getTripDeals(user);
 		
 		tourGuideService.tracker.stopTracking();
-		
-		assertEquals(10, providers.size());
+		// changed 10 for 5
+		assertEquals(5, providers.size());
 	}
 	
 	
