@@ -5,7 +5,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.DTO.AttractionDTO;
 import tripPricer.Provider;
 
 public class User {
@@ -18,13 +20,14 @@ public class User {
 	private List<UserReward> userRewards = new ArrayList<>();
 	private UserPreferences userPreferences = new UserPreferences();
 	private List<Provider> tripDeals = new ArrayList<>();
+	private  List<AttractionDTO> attractionDTOList = new ArrayList<>();
 	public User(UUID userId, String userName, String phoneNumber, String emailAddress) {
 		this.userId = userId;
 		this.userName = userName;
 		this.phoneNumber = phoneNumber;
 		this.emailAddress = emailAddress;
 	}
-	
+
 	public UUID getUserId() {
 		return userId;
 	}
@@ -88,9 +91,14 @@ public class User {
 	}
 
 	public VisitedLocation getLastVisitedLocation() {
-		return visitedLocations.get(visitedLocations.size() - 1);
+		return visitedLocations
+				.get(visitedLocations.size() - 1);
 	}
-	
+
+	public AttractionDTO getLastVisitedLocationUser() {
+		return  attractionDTOList
+				.get(attractionDTOList.size() - 1);
+	}
 	public void setTripDeals(List<Provider> tripDeals) {
 		this.tripDeals = tripDeals;
 	}
@@ -99,4 +107,8 @@ public class User {
 		return tripDeals;
 	}
 
+
+/*	public List<Attraction> getNearestLocation() {
+
+	}*/
 }

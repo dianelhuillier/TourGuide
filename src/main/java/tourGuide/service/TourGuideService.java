@@ -15,6 +15,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import tourGuide.DTO.AttractionDTO;
 import tourGuide.config.InternalTestHelper;
 import tourGuide.config.Tracker;
 import tourGuide.domain.User;
@@ -105,11 +106,28 @@ public class TourGuideService {
 		for(Attraction attraction : gpsUtil.getAttractions()) {
 			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
+
+//
+//						.stream()
+//						.limit(5)
+//						.collect(Collectors.toList());
+
 			}
 		}
 		
 		return nearbyAttractions;
 	}
+
+
+
+/*	public List<AttractionDTO> getLastUserLocation(User user) {
+List<AttractionDTO> visitedLocations = (List<AttractionDTO>) user.getLastVisitedLocation();
+List<AttractionDTO> listLastVisited = visitedLocations.stream().map(AttractionDTO::getLocation).collect(Collectors.toList());
+
+return listLastVisited;
+
+	}*/
+
 
 
 
@@ -164,5 +182,6 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	
+
+
 }
