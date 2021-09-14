@@ -95,7 +95,7 @@ public class User {
 				.get(visitedLocations.size() - 1);
 	}
 
-	public AttractionDTO getLastVisitedLocationUser() {
+	public AttractionDTO getLastVisitedLocationDTO() {
 		return  attractionDTOList
 				.get(attractionDTOList.size() - 1);
 	}

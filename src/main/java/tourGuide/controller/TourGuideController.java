@@ -1,5 +1,6 @@
 package tourGuide.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -27,7 +28,7 @@ public class TourGuideController {
 	TourGuideService tourGuideService;
 	@Autowired
     GpsUtil gpsUtil;
-	VisitedLocation visitedLocation;
+
 
     @GetMapping("/")
     public String index() {
@@ -88,24 +89,7 @@ public String getNearbyAttractions(@RequestParam String userName) {
     	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
     
-/*    @RequestMapping("/getAllCurrentLocations")
-    public String getAllCurrentLocations(@RequestParam String userName) {
-    	// TODO: Get a list of every user's most recent location as JSON
-    	//- Note: does not use gpsUtil to query for their current location, 
-    	//        but rather gathers the user's current location from their stored location history.
-    	//
-    	// Return object should be the just a JSON mapping of userId to Locations similar to:
-    	//     {
-    	//        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371} 
-    	//        ...     FILTRER USERID + LATITUDE LONGITUDE UNIQUEMENT
-    	//     }
-        VisitedLocation visitedLocation = getUser(userName).getLastVisitedLocation();
-*//*        List<VisitedLocation> list = new ArrayList<>();
-        list.add(visitedLocation);
-        list.stream().map(VisitedLocation::visitedLocation.location).collect(Collectors.toList());
-list.stream().filter(Location);*//*
-        return JsonStream.serialize(visitedLocation);
-    }*/
+
 
 
 
@@ -118,28 +102,15 @@ list.stream().filter(Location);*//*
         // Return object should be the just a JSON mapping of userId to Locations similar to:
         //     {
         //        "019b04a9-067a-4c76-8817-ee75088c3822": {"longitude":-48.188821,"latitude":74.84371}
-        //        ...     FILTRER USERID + LATITUDE LONGITUDE UNIQUEMENT
+        //        ...
         //     }
 
 
-
-        AttractionDTO attractionDTO = getUser(userName).getLastVisitedLocationUser();
+        VisitedLocation visitedLocation = getUser(userName).getLastVisitedLocation();
+        AttractionDTO attractionDTO = new AttractionDTO(visitedLocation.location, visitedLocation.userId);
 
         return JsonStream.serialize(attractionDTO);
     }
-
-@GetMapping("/testdto")
-public String testattraction(@RequestParam String userName) {
-        AttractionDTO attractionDTO = new AttractionDTO(getUser(userName).toString());
-        String test = attractionDTO.toString();
-        return test;
-}
-
-
-
-
-
-
 
 
 

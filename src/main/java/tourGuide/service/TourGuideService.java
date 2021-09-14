@@ -81,7 +81,6 @@ public class TourGuideService {
 		return providers;
 	}
 
-//!!!!!! For input string: "-140,523329"       getUserLocation
 	public VisitedLocation trackUserLocation(User user) {
 		Locale.setDefault(Locale.US);
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());

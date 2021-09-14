@@ -2,6 +2,7 @@ package tourGuide.DTO;
 
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
+import gpsUtil.location.VisitedLocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -18,33 +19,35 @@ import java.util.UUID;
 public class AttractionDTO {
 
 
-    public  String userName;
     public  UUID userId;
     public  Location location;
+//    public List<AttractionDTO> attractionDTOS = new ArrayList<>();
+//    public List<Attraction> attractionsList;
 
-    public AttractionDTO() {
-    }
 
 
-    public AttractionDTO(String userName) {
-        this.userName = userName;
+
+
+    public AttractionDTO(Location location, UUID userId) {
         this.userId = userId;
+        this.location = location;
+    }
+
+
+
+
+/*    public AttractionDTO(String userName) {
+        this.userName = userName;
+        this.userId = getUserId();
         this.location = getLocation();
-    }
+    }*/
 
 
 
-    private List<AttractionDTO> attractionDTOS = new ArrayList<>();
+//    public AttractionDTO getLastVisitedLocationDTO() {
+//        return attractionDTOS.get(attractionDTOS.size() -1 );
+//    }
 
-
-
-
-
-    public AttractionDTO getLastVisitedLocationDTO() {
-        return attractionDTOS.get(attractionDTOS.size() -1 );
-    }
-
-    public List<Attraction> attractionsList;
 
 
 
