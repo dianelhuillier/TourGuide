@@ -20,18 +20,36 @@ public class AttractionDTO {
 
 
     public  UUID userId;
+    public Location userLocation;
+
+    public String attractionName;
     public  Location location;
-//    public List<AttractionDTO> attractionDTOS = new ArrayList<>();
-//    public List<Attraction> attractionsList;
+    public Double distance;
+
+    public int rewardPoints;
+
+//REWARDS POINTS
 
 
-
-
-
-    public AttractionDTO(Location location, UUID userId) {
-        this.userId = userId;
+    public AttractionDTO(Location userLocation, String attractionName, Location location, Double distance) {
+        this.userLocation = userLocation;
+        this.attractionName = attractionName;
         this.location = location;
+        this.distance = distance;
     }
+
+    public AttractionDTO(UUID userId, Location userLocation) {
+        this.userId = userId;
+        this.userLocation = userLocation;
+    }
+
+
+
+
+
+
+
+
 
 
 

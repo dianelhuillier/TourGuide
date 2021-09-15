@@ -1,11 +1,12 @@
 package tourGuide.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 import gpsUtil.GpsUtil;
+import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import com.jsoniter.output.JsonStream;
 
 import gpsUtil.location.VisitedLocation;
 import tourGuide.DTO.AttractionDTO;
+import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.domain.User;
 import tripPricer.Provider;
@@ -28,6 +30,8 @@ public class TourGuideController {
 	TourGuideService tourGuideService;
 	@Autowired
     GpsUtil gpsUtil;
+	@Autowired
+    RewardsService rewardsService;
 
 
     @GetMapping("/")
@@ -56,7 +60,7 @@ public class TourGuideController {
     }
 
 //DTO?
-    //  TODO: Change this method to no longer return a List of Attractions.
+/*    //  TODO: Change this method to no longer return a List of Attractions.
  	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
  	//  Return a new JSON object that contains:
     	// Name of Tourist attraction, 
@@ -69,12 +73,83 @@ public class TourGuideController {
 public String getNearbyAttractions(@RequestParam String userName) {
     VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
     return JsonStream.serialize(getUser(userName).getLastVisitedLocation());
+}*/
+
+ /*   //  TODO: Change this method to no longer return a List of Attractions.
+    //  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
+    //  Return a new JSON object that contains:
+    // Name of Tourist attraction,
+    // Tourist attractions lat/long,
+    // The user's location lat/long,
+    // The distance in miles between the user's location and each of the attractions.
+    // The reward points for visiting each Attraction.
+    //    Note: Attraction reward points can be gathered from RewardsCentral
+    @RequestMapping("/getNearbyAttractions")
+    public List<AttractionDTO> getNearbyAttractions(@RequestParam String userName) {
+        List<AttractionDTO> nearestAttractions = new ArrayList<>();
+        List<AttractionDTO> attractionDTOList = new ArrayList<>();
+
+        List<Attraction> attractionList = gpsUtil.getAttractions();
+
+        for (Attraction attraction : attractionList) {
+            Location location = new Location(attraction.latitude, attraction.longitude);
+
+            VisitedLocation visitedLocation = getUser(userName).getLastVisitedLocation();
+            Location userLocation = new Location(visitedLocation.location.latitude, visitedLocation.location.longitude);
+
+
+            AttractionDTO attractionDTO = new AttractionDTO(rewardsService.getDistance(location, userLocation));
+
+            attractionDTOList.add(attractionDTO);
+
+           List<String>listAttractionsSorted= attractionDTOList.stream().map().collect(Collectors.toList());
+
+            Collections.sort(listAttractionsSorted);
+
+            return listAttractionsSorted;
 }
+        }*/
 
 
 
 
 
+
+
+
+    //  TODO: Change this method to no longer return a List of Attractions.
+ 	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
+ 	//  Return a new JSON object that contains:
+    	// Name of Tourist attraction,
+        // Tourist attractions lat/long,
+        // The user's location lat/long,
+        // The distance in miles between the user's location and each of the attractions.
+        // The reward points for visiting each Attraction.
+        //    Note: Attraction reward points can be gathered from RewardsCentral
+@RequestMapping("/getNearbyAttractions")
+public String getNearbyAttractions(@RequestParam String userName) {
+    VisitedLocation userLocation = tourGuideService.getUserLocation(getUser(userName));
+
+    List<Attraction> attractionList = gpsUtil.getAttractions();
+
+    List<AttractionDTO> attractionDTOList = new ArrayList<>();
+
+    for (Attraction attraction : attractionList) {
+        Double distance = rewardsService.getDistance(userLocation.location, attraction);
+
+
+        rewardsService.calculateRewards(getUser(userName));  // VOID
+
+        Location location = new Location(attraction.latitude, attraction.longitude);
+        AttractionDTO attractionDTO = new AttractionDTO(userLocation.location, attraction.attractionName, location, distance);
+        attractionDTOList.add(attractionDTO);
+    }
+
+        attractionDTOList.sort(Comparator.comparing(AttractionDTO::getDistance));
+        attractionDTOList = attractionDTOList.stream().limit(5).collect(Collectors.toList());
+
+        return JsonStream.serialize(attractionDTOList);
+    }
 
 
 
@@ -106,10 +181,19 @@ public String getNearbyAttractions(@RequestParam String userName) {
         //     }
 
 
-        VisitedLocation visitedLocation = getUser(userName).getLastVisitedLocation();
-        AttractionDTO attractionDTO = new AttractionDTO(visitedLocation.location, visitedLocation.userId);
+        VisitedLocation userLocation = getUser(userName).getLastVisitedLocation();
+        AttractionDTO attractionDTO = new AttractionDTO(userLocation.userId, userLocation.location);
+List<AttractionDTO> attractionDTOList = new ArrayList<>();
+attractionDTOList.add(attractionDTO);
 
-        return JsonStream.serialize(attractionDTO);
+List<AttractionDTO> attractionDTOListStream = attractionDTOList
+        .stream()
+        .map(p -> new AttractionDTO(
+                p.getUserId(),
+                p.getUserLocation()))
+        .collect(Collectors.toList());
+
+        return JsonStream.serialize(attractionDTOListStream);
     }
 
 
