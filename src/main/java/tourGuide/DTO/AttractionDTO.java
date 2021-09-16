@@ -1,8 +1,7 @@
 package tourGuide.DTO;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.DTO.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
