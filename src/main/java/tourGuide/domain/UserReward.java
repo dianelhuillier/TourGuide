@@ -1,8 +1,7 @@
 package tourGuide.domain;
 
-import gpsUtil.location.Attraction;
-import gpsUtil.location.VisitedLocation;
 
+import  tourGuide.DTO.*;
 public class UserReward {
 
 	public final VisitedLocation visitedLocation;

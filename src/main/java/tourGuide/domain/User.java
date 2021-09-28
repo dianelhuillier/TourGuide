@@ -8,7 +8,6 @@ import java.util.UUID;
 import gpsUtil.location.Location;
 import tourGuide.DTO.*;
 import tourGuide.DTO.AttractionDTO;
-import tripPricer.Provider;
 
 public class User {
 	private final UUID userId;

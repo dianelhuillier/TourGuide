@@ -9,6 +9,8 @@ import rewardCentral.RewardCentral;
 //import tourGuide.proxy.GpsUtilProxy;
 import tourGuide.service.RewardsService;
 import tourGuide.webClient.GpsUtilWebClient;
+import tourGuide.DTO.*;
+import tourGuide.webClient.RewardsWebClient;
 
 @Configuration
 public class TourGuideModule {
@@ -18,19 +20,19 @@ public class TourGuideModule {
 	GpsUtilWebClient gpsUtilWebClient;
 
 	@Bean
-	public GpsUtil getGpsUtil() {
-		return new GpsUtil();
+	public GpsUtilWebClient getGpsUtilWebClient() {
+		return new GpsUtilWebClient();
 	}
 
 	
 	@Bean
 	public RewardsService getRewardsService() {
-		return new RewardsService(getGpsUtil(), getRewardCentral());
+		return new RewardsService(getGpsUtilWebClient(), getRewardsCentralUri());
 	}
 	
 	@Bean
-	public RewardCentral getRewardCentral() {
-		return new RewardCentral();
+	public RewardsWebClient getRewardsCentralUri() {
+		return new RewardsWebClient();
 	}
 	
 }

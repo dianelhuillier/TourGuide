@@ -13,7 +13,7 @@ import java.util.UUID;
 public class RewardsWebClient {
 
     // Declare the base url (for docker deployment)
-    private final String BASE_URL = "http://rewards:8082";
+    private final String BASE_URL = "http://localhost:8082";
     // Declare the base url (for localhost)
     private final String BASE_URL_LOCALHOST = "http://localhost:8082";
     // Declare the path

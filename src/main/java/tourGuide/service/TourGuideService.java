@@ -3,7 +3,6 @@ package tourGuide.service;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -11,31 +10,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
-import tourGuide.DTO.AttractionDTO;
+import tourGuide.DTO.*;
 import tourGuide.config.InternalTestHelper;
 import tourGuide.config.Tracker;
 import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
-import tripPricer.Provider;
-import tripPricer.TripPricer;
+import tourGuide.webClient.GpsUtilWebClient;
+import tourGuide.webClient.RewardsWebClient;
+import tourGuide.webClient.TripPricerWebClient;
 
 @Service
 public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
-	private final GpsUtil gpsUtil;
+	public GpsUtilWebClient gpsUtilWebClient;
+	public RewardsWebClient rewardsWebClient;
 	private final RewardsService rewardsService;
-	private final TripPricer tripPricer = new TripPricer();
+	private final TripPricerWebClient tripPricerWebClient = new TripPricerWebClient();
 	public final Tracker tracker;
 	boolean testMode = true;
 	
-	public TourGuideService(GpsUtil gpsUtil, RewardsService rewardsService) {
+	public TourGuideService(RewardsService rewardsService, GpsUtilWebClient gpsUtilWebClient, TripPricerWebClient tripPricerWebClient) {
 		Locale.setDefault(Locale.US);
-		this.gpsUtil = gpsUtil;
 		this.rewardsService = rewardsService;
+		this.gpsUtilWebClient=gpsUtilWebClient;
 		
 		if(testMode) {
 			logger.info("TestMode enabled");
@@ -49,13 +46,6 @@ public class TourGuideService {
 
 
 
-
-
-
-
-
-
-
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation;
 		if (user.getVisitedLocations().size() > 0) visitedLocation = user.getLastVisitedLocation();
@@ -64,7 +54,7 @@ public class TourGuideService {
 	}
 	public VisitedLocation trackUserLocation(User user) {
 		Locale.setDefault(Locale.US);
-		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
+		VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		rewardsService.calculateRewards(user);
 		return visitedLocation;
@@ -75,7 +65,7 @@ public class TourGuideService {
 
 	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for(Attraction attraction : gpsUtil.getAttractions()) {
+		for(Attraction attraction : gpsUtilWebClient.getAttractions()) {
 			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
 				nearbyAttractions.add(attraction);
 //
@@ -118,7 +108,7 @@ public class TourGuideService {
 
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
-		List<Provider> providers = tripPricer.getPrice(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(), 
+		List<Provider> providers = tripPricerWebClient.getPriceWebClient(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
 		return providers;

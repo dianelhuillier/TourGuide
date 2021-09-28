@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
-import gpsUtil.location.VisitedLocation;
+import tourGuide.DTO.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import rewardCentral.RewardCentral;
 import tourGuide.domain.User;
 import tourGuide.domain.UserReward;
+import tourGuide.webClient.GpsUtilWebClient;
+import tourGuide.webClient.RewardsWebClient;
 
 @Service
 public class RewardsService{
@@ -23,14 +23,16 @@ public class RewardsService{
     private int defaultProximityBuffer = 10;
 	private int proximityBuffer = defaultProximityBuffer;
 	private int attractionProximityRange = 200;
-	private final GpsUtil gpsUtil;
-	private final RewardCentral rewardsCentral;
-	
-	public RewardsService(GpsUtil gpsUtil, RewardCentral rewardCentral) {
-		this.gpsUtil = gpsUtil;
-		this.rewardsCentral = rewardCentral;
+	private final GpsUtilWebClient gpsUtilWebClient;
+	private final RewardsWebClient rewardsWebClient;
+
+	public RewardsService(GpsUtilWebClient gpsUtilWebClient, RewardsWebClient rewardsWebClient) {
+		this.gpsUtilWebClient = gpsUtilWebClient;
+		this.rewardsWebClient = rewardsWebClient;
 	}
-	
+
+
+
 	public void setProximityBuffer(int proximityBuffer) {
 		this.proximityBuffer = proximityBuffer;
 	}
@@ -42,7 +44,7 @@ public class RewardsService{
 //	@PostMapping("/viewReward")
 	public void calculateRewards(User user) {
 		List<VisitedLocation> userLocations = user.getVisitedLocations();
-		List<Attraction> attractions = gpsUtil.getAttractions();
+		List<Attraction> attractions = gpsUtilWebClient.getAttractions();
 		
 		for(VisitedLocation visitedLocation : userLocations) {
 			for(Attraction attraction : attractions) {
@@ -65,7 +67,8 @@ public class RewardsService{
 	}
 	
 	private int getRewardPoints(Attraction attraction, User user) {
-		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
+		return rewardsWebClient.getRewardPointsWebClient(attraction.attractionId, user.getUserId());
+		//		return rewardsCentral.getAttractionRewardPoints(attraction.attractionId, user.getUserId());
 	}
 
 //	@GetMapping("/getDistance")

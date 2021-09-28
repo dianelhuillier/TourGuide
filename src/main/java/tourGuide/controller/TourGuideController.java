@@ -1,3 +1,4 @@
+/*
 package tourGuide.controller;
 
 import java.util.*;
@@ -5,9 +6,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import gpsUtil.GpsUtil;
-import gpsUtil.location.Attraction;
-import gpsUtil.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,22 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jsoniter.output.JsonStream;
 
-import gpsUtil.location.VisitedLocation;
-import tourGuide.DTO.AttractionDTO;
+import tourGuide.DTO.*;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.domain.User;
-import tripPricer.Provider;
+import tourGuide.webClient.GpsUtilWebClient;
 
 @RestController
 public class TourGuideController {
 
-	@Autowired
-	TourGuideService tourGuideService;
-	@Autowired
-    GpsUtil gpsUtil;
-	@Autowired
+    @Autowired
+    TourGuideService tourGuideService;
+    @Autowired
     RewardsService rewardsService;
+    @Autowired
+    GpsUtilWebClient gpsUtilWebClient;
 
 
     @GetMapping("/")
@@ -40,26 +37,27 @@ public class TourGuideController {
     }
 
 
-
     @GetMapping("/getLocation")
     public String getLocation(@RequestParam String userName) {
-   	VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
+        VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
 
-		return JsonStream.serialize(visitedLocation.location);
+        return JsonStream.serialize(visitedLocation.location);
     }
 
     @GetMapping("/testLocation")
-    public String testLocation( @RequestParam String userName)  {
+    public String testLocation(@RequestParam String userName) {
         User user = tourGuideService.getUser(userName);
         System.out.println(userName);
         double longitude = ThreadLocalRandom.current().nextDouble(-180.0D, 180.0D);
 
         double latitude = ThreadLocalRandom.current().nextDouble(-85.05112878D, 85.05112878D);
-        VisitedLocation visitedLocation = new VisitedLocation(null, new Location(latitude, longitude), new Date());        System.out.println(visitedLocation);
+        VisitedLocation visitedLocation = new VisitedLocation(null, new Location(latitude, longitude), new Date());
+        System.out.println(visitedLocation);
         return JsonStream.serialize(visitedLocation.location);
     }
 
 //DTO?
+*/
 /*    //  TODO: Change this method to no longer return a List of Attractions.
  	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
  	//  Return a new JSON object that contains:
@@ -73,9 +71,11 @@ public class TourGuideController {
 public String getNearbyAttractions(@RequestParam String userName) {
     VisitedLocation visitedLocation = tourGuideService.getUserLocation(getUser(userName));
     return JsonStream.serialize(getUser(userName).getLastVisitedLocation());
-}*/
+}*//*
 
- /*   //  TODO: Change this method to no longer return a List of Attractions.
+
+ */
+/*   //  TODO: Change this method to no longer return a List of Attractions.
     //  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
     //  Return a new JSON object that contains:
     // Name of Tourist attraction,
@@ -108,42 +108,37 @@ public String getNearbyAttractions(@RequestParam String userName) {
 
             return listAttractionsSorted;
 }
-        }*/
-
-
-
-
-
+        }*//*
 
 
 
     //  TODO: Change this method to no longer return a List of Attractions.
- 	//  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
- 	//  Return a new JSON object that contains:
-    	// Name of Tourist attraction,
-        // Tourist attractions lat/long,
-        // The user's location lat/long,
-        // The distance in miles between the user's location and each of the attractions.
-        // The reward points for visiting each Attraction.
-        //    Note: Attraction reward points can be gathered from RewardsCentral
-@RequestMapping("/getNearbyAttractions")
-public String getNearbyAttractions(@RequestParam String userName) {
-    VisitedLocation userLocation = tourGuideService.getUserLocation(getUser(userName));
+    //  Instead: Get the closest five tourist attractions to the user - no matter how far away they are.
+    //  Return a new JSON object that contains:
+    // Name of Tourist attraction,
+    // Tourist attractions lat/long,
+    // The user's location lat/long,
+    // The distance in miles between the user's location and each of the attractions.
+    // The reward points for visiting each Attraction.
+    //    Note: Attraction reward points can be gathered from RewardsCentral
+    @RequestMapping("/getNearbyAttractions")
+    public String getNearbyAttractions(@RequestParam String userName) {
+        VisitedLocation userLocation = tourGuideService.getUserLocation(getUser(userName));
 
-    List<Attraction> attractionList = gpsUtil.getAttractions();
+        List<tourGuide.DTO.Attraction> attractionList = gpsUtilWebClient.getAttractions();
 
-    List<AttractionDTO> attractionDTOList = new ArrayList<>();
+        List<AttractionDTO> attractionDTOList = new ArrayList<>();
 
-    for (Attraction attraction : attractionList) {
-        Double distance = rewardsService.getDistance(userLocation.location, attraction);
+        for (Attraction attraction : attractionList) {
+            Double distance = rewardsService.getDistance(userLocation.location, attraction);
 
 
-        rewardsService.calculateRewards(getUser(userName));  // VOID
+            //     rewardsService.calculateRewards(getUser(userName));  // VOID
 
-        Location location = new Location(attraction.latitude, attraction.longitude);
-        AttractionDTO attractionDTO = new AttractionDTO(userLocation.location, attraction.attractionName, location, distance);
-        attractionDTOList.add(attractionDTO);
-    }
+            Location location = new Location(attraction.latitude, attraction.longitude);
+            AttractionDTO attractionDTO = new AttractionDTO(userLocation.location, attraction.attractionName, location, distance);
+            attractionDTOList.add(attractionDTO);
+        }
 
         attractionDTOList.sort(Comparator.comparing(AttractionDTO::getDistance));
         attractionDTOList = attractionDTOList.stream().limit(5).collect(Collectors.toList());
@@ -152,20 +147,10 @@ public String getNearbyAttractions(@RequestParam String userName) {
     }
 
 
-
-
-
-
-
-
-
-    @RequestMapping("/getRewards") 
+    @RequestMapping("/getRewards")
     public String getRewards(@RequestParam String userName) {
-    	return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
+        return JsonStream.serialize(tourGuideService.getUserRewards(getUser(userName)));
     }
-    
-
-
 
 
     @RequestMapping("/getAllCurrentLocations")
@@ -183,32 +168,29 @@ public String getNearbyAttractions(@RequestParam String userName) {
 
         VisitedLocation userLocation = getUser(userName).getLastVisitedLocation();
         AttractionDTO attractionDTO = new AttractionDTO(userLocation.userId, userLocation.location);
-List<AttractionDTO> attractionDTOList = new ArrayList<>();
-attractionDTOList.add(attractionDTO);
+        List<AttractionDTO> attractionDTOList = new ArrayList<>();
+        attractionDTOList.add(attractionDTO);
 
-List<AttractionDTO> attractionDTOListStream = attractionDTOList
-        .stream()
-        .map(p -> new AttractionDTO(
-                p.getUserId(),
-                p.getUserLocation()))
-        .collect(Collectors.toList());
+        List<AttractionDTO> attractionDTOListStream = attractionDTOList
+                .stream()
+                .map(p -> new AttractionDTO(
+                        p.getUserId(),
+                        p.getUserLocation()))
+                .collect(Collectors.toList());
 
         return JsonStream.serialize(attractionDTOListStream);
     }
 
 
-
+    private User getUser(String userName) {
+        return tourGuideService.getUser(userName);
+    }
 
 
     @RequestMapping("/getTripDeals")
     public String getTripDeals(@RequestParam String userName) {
-    	List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
-    	return JsonStream.serialize(providers);
+        List<Provider> providers = tourGuideService.getTripDeals(getUser(userName));
+        return JsonStream.serialize(providers);
     }
-    
-    private User getUser(String userName) {
-    	return tourGuideService.getUser(userName);
-    }
-   
 
-}
+}*/
