@@ -78,7 +78,7 @@ public class User {
 	}
 	
 	public List<UserReward> getUserRewards() {
-		System.out.println("list user rewards : " + userRewards); // VIDE
+		System.out.println("DOMAIN list user rewards : " + userRewards); // VIDE
 		return userRewards;
 	}
 	

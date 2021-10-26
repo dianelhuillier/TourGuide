@@ -49,6 +49,7 @@ public class TourGuideService {
 
 
 
+
 	public VisitedLocation getUserLocation(User user) {
 		VisitedLocation visitedLocation;
 		if (user.getVisitedLocations().size() > 0) visitedLocation = user.getLastVisitedLocation();
@@ -160,7 +161,7 @@ public VisitedLocation trackUserLocation(User user) {
 		return providers;
 	}
 	public List<UserReward> getUserRewards(User user) {
-		System.out.println("user.getUserRewards( tourguideservice" + user.getUserRewards());
+		System.out.println("user.getUserRewards tourguideservice" + user.getUserRewards());
 		return user.getUserRewards();
 	}
 
@@ -240,6 +241,7 @@ return listLastVisited;
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
+
 
 
 }

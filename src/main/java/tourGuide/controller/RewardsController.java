@@ -35,12 +35,17 @@ public class RewardsController {
      * @param userName string of the username (internalUserX)
      * @return a Json string of all UserRewards
      */
-    @GetMapping("/getRewards")
+/*    @GetMapping("/getRewards")
     public String getRewards(@RequestParam String userName) {
         logger.debug("Access to /getRewards endpoint with username : " + userName);
         System.out.println(tourGuideService.getUserRewards(tourGuideService.getUser(userName)));
         return JsonStream.serialize(tourGuideService.getUserRewards(tourGuideService.getUser(userName)));
+    }*/
+    @GetMapping("/getRewards")
+    public String getRewards(@RequestParam String userName) {
+        logger.debug("Access to /getRewards endpoint with username : " + userName);
+        System.out.println(tourGuideService.getUserRewards(tourGuideService.getUser(userName)));
+        return JsonStream.serialize(rewardsService.getRewards(tourGuideService.getUser(userName)));
     }
-
 
 }

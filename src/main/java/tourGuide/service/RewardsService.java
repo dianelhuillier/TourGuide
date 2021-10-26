@@ -213,6 +213,10 @@ return randomInt;
 		return statuteMiles;
 	}
 
+	public List<UserReward> getRewards(User user) {
+	return user.getUserRewards();
+	}
+
 /*	public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
 		try {
 			TimeUnit.MILLISECONDS.sleep(ThreadLocalRandom.current().nextInt(1, 1000));

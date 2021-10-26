@@ -24,6 +24,7 @@ public class UserReward {
 
 
 
+
 	public void setRewardPoints(int rewardPoints) {
 		this.rewardPoints = rewardPoints;
 	}
