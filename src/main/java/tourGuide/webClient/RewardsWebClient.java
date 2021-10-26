@@ -8,6 +8,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class RewardsWebClient {
@@ -48,5 +50,13 @@ public class RewardsWebClient {
 
         rewardPoints = result.getBody();
         return rewardPoints;
-    }
-}
+       /* try {
+            TimeUnit.MILLISECONDS.sleep((long) ThreadLocalRandom.current().nextInt(1, 1000));
+        } catch (InterruptedException var4) {
+        }
+
+        int randomInt = ThreadLocalRandom.current().nextInt(1, 1000);
+        return randomInt;
+
+    }*/
+}}

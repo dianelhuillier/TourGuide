@@ -5,16 +5,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import tourGuide.DTO.Provider;
+import tourGuide.DTO.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TripPricerWebClient {
 
     // Declare the base url (for docker deployment)
-    private final String BASE_URL = "http://pricer:8083";
+    private final String BASE_URL = "http://localhost:8083";
     // Declare the base url (for localhost)
     private final String BASE_URL_LOCALHOST = "http://localhost:8083";
     // Declare the path
@@ -53,7 +57,7 @@ public class TripPricerWebClient {
                                 + REWARDS_POINTS + rewardsPoints,
                         HttpMethod.GET, null, new ParameterizedTypeReference<List<Provider>>() {
                         });
-        listProvider= result.getBody();
+        listProvider = result.getBody();
         return listProvider;
     }
 }

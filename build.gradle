@@ -40,6 +40,8 @@ targetCompatibility = 1.8
 dependencies {
 
 
+        compile 'org.springframework.boot:spring-boot-starter-webflux'
+
 
     implementation 'org.jetbrains:annotations:20.1.0'
     implementation 'org.projectlombok:lombok:1.18.20'

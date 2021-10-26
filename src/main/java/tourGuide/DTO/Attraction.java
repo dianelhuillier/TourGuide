@@ -16,6 +16,13 @@ public class Attraction extends Location {
         this.attractionName = attractionName;
         this.city = city;
         this.state = state;
+    //    this.attractionId = UUID.randomUUID();
+    }
+    public Attraction(String attractionName, String city, String state, double latitude, double longitude, UUID attractionId) {
+        super(latitude, longitude);
+        this.attractionName = attractionName;
+        this.city = city;
+        this.state = state;
         this.attractionId = UUID.randomUUID();
     }
 }

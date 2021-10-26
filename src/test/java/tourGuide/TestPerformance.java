@@ -1,3 +1,4 @@
+/*
 package tourGuide;
 
 import static org.junit.Assert.assertTrue;
@@ -21,7 +22,8 @@ import tourGuide.webClient.RewardsWebClient;
 
 public class TestPerformance {
 	
-	/*
+	*/
+/*
 	 * A note on performance improvements:
 	 *     
 	 *     The number of users generated for the high volume tests can be easily adjusted via this method:
@@ -39,7 +41,8 @@ public class TestPerformance {
      *
      *     highVolumeGetRewards: 100,000 users within 20 minutes:
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
-	 */
+	 *//*
+
 	
 	@Ignore
 	@Test
@@ -80,9 +83,8 @@ public class TestPerformance {
 
 
 
-	    Attraction attraction = gpsUtilWebClient.getAttractions().get(0);
-		List<User> allUsers = new ArrayList<>();
-		allUsers = tourGuideService.getAllUsers();
+	    Attraction attraction = gpsUtilWebClient.getAllAttractions().get(0);
+		List<User> allUsers = tourGuideService.getAllUsers();
 		allUsers.forEach(u -> u.addToVisitedLocations(new VisitedLocation(u.getUserId(), attraction, new Date())));
 	     
 	    allUsers.forEach(u -> rewardsService.calculateRewards(u));
@@ -98,3 +100,4 @@ public class TestPerformance {
 	}
 	
 }
+*/

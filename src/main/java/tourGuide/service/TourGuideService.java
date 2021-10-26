@@ -1,5 +1,6 @@
 package tourGuide.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -24,16 +25,18 @@ public class TourGuideService {
 	private Logger logger = LoggerFactory.getLogger(TourGuideService.class);
 	public GpsUtilWebClient gpsUtilWebClient;
 	public RewardsWebClient rewardsWebClient;
-	private final RewardsService rewardsService;
-	private final TripPricerWebClient tripPricerWebClient = new TripPricerWebClient();
+	private RewardsService rewardsService;
+
+	public TripPricerWebClient tripPricerWebClient = new TripPricerWebClient();
 	public final Tracker tracker;
 	boolean testMode = true;
-	
+
 	public TourGuideService(RewardsService rewardsService, GpsUtilWebClient gpsUtilWebClient, TripPricerWebClient tripPricerWebClient) {
 		Locale.setDefault(Locale.US);
 		this.rewardsService = rewardsService;
 		this.gpsUtilWebClient=gpsUtilWebClient;
-		
+		this.tripPricerWebClient=tripPricerWebClient;
+
 		if(testMode) {
 			logger.info("TestMode enabled");
 			logger.debug("Initializing users");
@@ -52,18 +55,27 @@ public class TourGuideService {
 		else visitedLocation = trackUserLocation(user);
 		return visitedLocation;
 	}
-	public VisitedLocation trackUserLocation(User user) {
-		Locale.setDefault(Locale.US);
+/*	public VisitedLocation trackUserLocation(User user) {
+	//	Locale.setDefault(Locale.US);
 		VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
+		rewardsWebClient.calculateRewards(user);
 		return visitedLocation;
-	}
+	}*/
+public VisitedLocation trackUserLocation(User user) {
+	UUID userId = user.getUserId();
+	VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(userId);
+	user.addToVisitedLocations(visitedLocation);
+	rewardsService.calculateRewards(user);
+
+	return visitedLocation;
+}
 	public VisitedLocation trackUser (User user){
 		return user.getLastVisitedLocation();
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
+
+/*	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
 		List<Attraction> nearbyAttractions = new ArrayList<>();
 		for(Attraction attraction : gpsUtilWebClient.getAttractions()) {
 			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
@@ -75,10 +87,43 @@ public class TourGuideService {
 			}
 		}
 		return nearbyAttractions;
+	}*/
+	public List<AttractionDTO> getNearByAttractions(VisitedLocation visitedLocation, User user) {
+		List<AttractionDTO> nearbyAttractions = new ArrayList<>();
+		for(Attraction attraction : gpsUtilWebClient.getAllAttractions()) {
+			System.out.println("tourservice getnearbyattractions : " + gpsUtilWebClient.getAllAttractions());
+
+/*AttractionDTO attractionDTO = new AttractionDTO(attraction.attractionName, attraction.longitude, attraction.latitude,
+		visitedLocation.location, rewardsService.getDistance(attraction, visitedLocation.location),
+		rewardsService.getRewardPoints(attraction, user));*/
+			AttractionDTO attractionDTO = new AttractionDTO(visitedLocation.location,
+					attraction.attractionName, rewardsService.getDistance(attraction, visitedLocation.location),
+								rewardsService.getRewardPoints(attraction, user));
+		//	try {
+
+
+			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
+				nearbyAttractions.add(attractionDTO);
+				System.out.println("tourguideservice nearbyattractions=  " + nearbyAttractions);
+
+	//			nearbyAttractions.sort(Comparator.comparing(AttractionDTO::getDistance));
+	//			nearbyAttractions = nearbyAttractions.stream().limit(5).collect(Collectors.toList());
+				System.out.println("tourguideservice nearbyattractions sorted : " + nearbyAttractions);
+			}
+	//		}finally {
+
+	//		}
+		}
+
+		return nearbyAttractions;
 	}
 
 
-
+/*	List<UserNearestAttractionsModel> listAttractionsSorted = nearestAttractions
+			.stream()
+			.sorted(Comparator.comparing(UserNearestAttractionsModel::getAttractionProximityRangeMiles))
+			.limit(nbNearestAttractions)
+			.collect(Collectors.toList());*/
 
 
 
@@ -108,12 +153,14 @@ public class TourGuideService {
 
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
+		System.out.println("cumulative reward points tourservice");
 		List<Provider> providers = tripPricerWebClient.getPriceWebClient(tripPricerApiKey, user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
 				user.getUserPreferences().getNumberOfChildren(), user.getUserPreferences().getTripDuration(), cumulatativeRewardPoints);
 		user.setTripDeals(providers);
 		return providers;
 	}
 	public List<UserReward> getUserRewards(User user) {
+		System.out.println("user.getUserRewards( tourguideservice" + user.getUserRewards());
 		return user.getUserRewards();
 	}
 
@@ -123,7 +170,7 @@ public class TourGuideService {
 //		VisitedLocation visitedLocation = (user.getVisitedLocations().size() > 0) ?
 //				user.getLastVisitedLocation() :
 //				trackUserLocation(user);
-//		return visitedLocation;
+//		return visitedLocation;}
 
 
 

@@ -32,6 +32,7 @@ public class TripPricerController {
         logger.debug("Access to /getTripDeals endpoint with username : " + userName);
 
     	List<Provider> providers = tourGuideService.getTripDeals(tourGuideService.getUser(userName));
+        System.out.println(providers);
     	return JsonStream.serialize(providers);
     }
 }
