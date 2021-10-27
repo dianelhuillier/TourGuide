@@ -56,6 +56,12 @@ public class AttractionDTO {
         this.distance = distance;
     }
 
+    public AttractionDTO(int rewardPoints) {
+        this.rewardPoints = rewardPoints;
+    }
+
+
+
 
 
 

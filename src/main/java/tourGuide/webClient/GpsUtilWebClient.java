@@ -107,7 +107,10 @@ public class GpsUtilWebClient {
         attractions.add(new Attraction("Cinderella Castle", "Orlando", "FL", 28.419411D, -81.5812D));
         return attractions;
     }*/
-}}
+}
+
+
+}
 /*
 
     WebClient client = WebClient.builder()

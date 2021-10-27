@@ -44,7 +44,8 @@ public class RewardsController {
     @GetMapping("/getRewards")
     public String getRewards(@RequestParam String userName) {
         logger.debug("Access to /getRewards endpoint with username : " + userName);
-        System.out.println(tourGuideService.getUserRewards(tourGuideService.getUser(userName)));
+        System.out.println("TOURGUIEDSERVICE " + tourGuideService.getUserRewards(tourGuideService.getUser(userName)));
+   //     return JsonStream.serialize(rewardsService.getRewards(tourGuideService.getUser(userName)));
         return JsonStream.serialize(rewardsService.getRewards(tourGuideService.getUser(userName)));
     }
 

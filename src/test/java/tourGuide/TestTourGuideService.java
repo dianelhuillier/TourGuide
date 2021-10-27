@@ -184,7 +184,7 @@ public class TestTourGuideService {
 
 		assertEquals(5, providers.size());
 	}*/
-    @Test
+/*    @Test
 public void getTripDeals() {
     GpsUtilWebClient gpsUtilWebClient = new GpsUtilWebClient();
     RewardsService rewardsService = new RewardsService(gpsUtilWebClient, new RewardsWebClient());
@@ -198,6 +198,23 @@ public void getTripDeals() {
     tourGuideService.tracker.stopTracking();
 
     assertEquals(10, providers.size());
+}*/
+@Test
+public void getTripDeals() {
+	InternalTestHelper.setInternalUserNumber(0);
+	GpsUtilWebClient gpsUtilWebClient = new GpsUtilWebClient();
+	TripPricerWebClient tripPricerWebClient = new TripPricerWebClient();
+	RewardsWebClient rewardsWebClient = new RewardsWebClient();
+	RewardsService rewardsService = new RewardsService(gpsUtilWebClient, rewardsWebClient);
+	TourGuideService tourGuideService = new TourGuideService(rewardsService,
+			gpsUtilWebClient, tripPricerWebClient);
+
+	User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+
+	List<Provider> providers = tourGuideService.getTripDeals(user);
+
+	tourGuideService.tracker.stopTracking();
+
+	assertEquals(5, providers.size());
 }
-	
 }

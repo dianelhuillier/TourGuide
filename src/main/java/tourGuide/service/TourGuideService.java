@@ -56,19 +56,20 @@ public class TourGuideService {
 		else visitedLocation = trackUserLocation(user);
 		return visitedLocation;
 	}
-/*	public VisitedLocation trackUserLocation(User user) {
-	//	Locale.setDefault(Locale.US);
-		VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(user.getUserId());
-		user.addToVisitedLocations(visitedLocation);
-		rewardsWebClient.calculateRewards(user);
-		return visitedLocation;
-	}*/
-public VisitedLocation trackUserLocation(User user) {
+
+/*public VisitedLocation trackUserLocation(User user) {
 	UUID userId = user.getUserId();
 	VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(userId);
 	user.addToVisitedLocations(visitedLocation);
 	rewardsService.calculateRewards(user);
 
+	return visitedLocation;
+}*/
+public VisitedLocation trackUserLocation(User user) {
+	UUID userId = user.getUserId();
+	VisitedLocation visitedLocation = gpsUtilWebClient.getUserLocation(userId);
+	user.addToVisitedLocations(visitedLocation);
+	rewardsService.calculateRewards(user);
 	return visitedLocation;
 }
 	public VisitedLocation trackUser (User user){

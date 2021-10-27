@@ -1,10 +1,12 @@
 package tourGuide.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ public class RewardsService {
 	private final int attractionProximityRange = 200;
 	private final GpsUtilWebClient gpsUtilWebClient;
 	private final RewardsWebClient rewardsWebClient;
+	public TourGuideService tourGuideService;
 
 	public RewardsService(GpsUtilWebClient gpsUtilWebClient, RewardsWebClient rewardsWebClient) {
 		this.gpsUtilWebClient = gpsUtilWebClient;
@@ -213,8 +216,26 @@ return randomInt;
 		return statuteMiles;
 	}
 
-	public List<UserReward> getRewards(User user) {
-	return user.getUserRewards();
+	public List<Integer> getRewards(User user) {
+	VisitedLocation visitedLocation = user.getLastVisitedLocation();
+		System.out.println(user.getLastVisitedLocation());
+		calculateRewards(user);
+		List<Attraction> attractionList = gpsUtilWebClient.getAllAttractions();
+		List<AttractionDTO> attractionDTOList = new ArrayList<>();
+
+		for (Attraction attraction : attractionList) {
+			UserReward userReward = new UserReward(visitedLocation, attraction, getRewardPoints(attraction, user));
+//			tourGuideService.getNearByAttractions(visitedLocation, user);
+			user.addUserReward(userReward);
+//			System.out.println("getrewardsservice" + tourGuideService.getNearByAttractions(visitedLocation, user));
+			AttractionDTO attractionDTO = new AttractionDTO(getRewardPoints(attraction, user));
+			attractionDTOList.add(attractionDTO);
+
+			attractionDTOList.stream().map(AttractionDTO::getRewardPoints).collect(Collectors.toList());
+			System.out.println(attractionDTOList);
+		}
+
+		return attractionDTOList.stream().map(AttractionDTO::getRewardPoints).collect(Collectors.toList());
 	}
 
 /*	public int getAttractionRewardPoints(UUID attractionId, UUID userId) {
